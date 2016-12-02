@@ -1,9 +1,9 @@
 ---
 
 - name: Adding group
-  group: >
-    name={{ sftp_users_group }}
-    state=present
+  group:
+    name: {{ sftp_users_group }}
+    state: present
   when: sftp_users_group is defined
   tags:
     - networking
@@ -11,24 +11,24 @@
     - config
 
 - name: Registering nologin shell
-  lineinfile: >
-    state=present
-    dest=/etc/shells
-    line="/usr/sbin/nologin"
-    regexp="^/usr/sbin/nologin"
-    insertafter=EOF
+  lineinfile:
+    state: present
+    dest: /etc/shells
+    line: "/usr/sbin/nologin"
+    regexp: "^/usr/sbin/nologin"
+    insertafter: EOF
   tags:
     - networking
     - sftp
     - config
 
 - name: Configuring sshd subsystem
-  lineinfile: >
-    state=present
-    dest=/etc/ssh/sshd_config
-    validate="/usr/sbin/sshd -T -f %s"
-    line="Subsystem sftp internal-sftp"
-    regexp="^Subsystem sftp"
+  lineinfile:
+    state: present
+    dest: /etc/ssh/sshd_config
+    validate: "/usr/sbin/sshd -T -f %s"
+    line: "Subsystem sftp internal-sftp"
+    regexp: "^Subsystem sftp"
   notify: restart ssh
   tags:
     - networking
@@ -36,7 +36,7 @@
     - config
 
 - name: Clearing sshd config
-  command: >
+  command:
     sed -in '/{{ sftp_placeholder_start }}/,/{{ sftp_placeholder_end }}/d' /etc/ssh/sshd_config
   notify: restart ssh
   tags:
@@ -45,11 +45,11 @@
     - config
 
 - name: Adding sshd config placeholder
-  lineinfile: >
-    state=present
-    dest=/etc/ssh/sshd_config
-    validate="/usr/sbin/sshd -T -f %s"
-    line="{{ '\n' ~ sftp_placeholder_start ~ '\n' ~ sftp_placeholder_end }}"
+  lineinfile:
+    state: present
+    dest: /etc/ssh/sshd_config
+    validate: "/usr/sbin/sshd -T -f %s"
+    line: "{{ '\n' ~ sftp_placeholder_start ~ '\n' ~ sftp_placeholder_end }}"
   tags:
     - networking
     - sftp
