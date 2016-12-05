@@ -1,4 +1,9 @@
 ---
 
 - include: config.yml
+
 - include: users.yml
+  with_items: "{{ sftp_users }}"
+  loop_control:
+    loop_var: user
+    label: user.username
